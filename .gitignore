@@ -1,0 +1,45 @@
+# Environment and secrets
+.env
+*.env
+!config/env.example
+
+# Database data
+data/pgdata/
+data/superset-repo/
+data/*
+pgdata/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# all the test files
+test/
+superset-repo/

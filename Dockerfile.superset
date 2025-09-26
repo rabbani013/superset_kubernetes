@@ -1,0 +1,36 @@
+# Dockerfile.superset
+# -------------------
+# Extends the official Apache Superset image by:
+# - Installing additional dependencies (BigQuery, PyArrow, Pandas)
+# - Copying entrypoint scripts for Celery Worker and Beat
+#
+# Used by docker-compose to build custom Superset images.
+
+FROM apache/superset:4.1.4
+
+USER root
+
+# Install BigQuery drivers
+COPY config/requirements-local.txt /app/requirements-local.txt
+RUN pip install --no-cache-dir -r /app/requirements-local.txt
+
+
+# Copy Celery entrypoint scripts
+COPY entrypoints/entrypoint-celery.sh /app/entrypoint-celery.sh
+COPY entrypoints/entrypoint-beat.sh /app/entrypoint-beat.sh
+COPY entrypoints/entrypoint-superset-final-working.sh /app/entrypoint-superset-final-working.sh
+RUN chmod +x /app/entrypoint-celery.sh /app/entrypoint-beat.sh /app/entrypoint-superset-final-working.sh
+
+USER superset
+
+
+
+# FROM apache/superset:4.1.4
+
+# USER root
+
+# # Install BigQuery drivers
+# COPY config/requirements-local.txt /app/requirements-local.txt
+# RUN pip install --no-cache-dir -r /app/requirements-local.txt
+
+# USER superset

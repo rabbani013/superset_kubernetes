@@ -1,0 +1,12 @@
+# requirements-local.txt
+# ----------------------
+# Python dependencies to install on top of the base Superset image.
+# Keeps third-party drivers and libraries versioned and separate.
+#
+# Example: BigQuery, PyArrow, Pandas
+
+sqlalchemy-bigquery
+pybigquery
+pyarrow
+pandas
+psycopg2-binary
