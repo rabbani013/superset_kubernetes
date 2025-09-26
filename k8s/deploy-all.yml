@@ -13,46 +13,11 @@ data:
     import os
 
     # ===========================================
-    # SIMPLE SUPERSET CONFIGURATION
+    # SUPERSET CONFIGURATION
     # ===========================================
-
-    # Database Settings (PostgreSQL)
-    POSTGRES_USER = os.getenv("POSTGRES_USER")
-    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-    POSTGRES_HOST = os.getenv("POSTGRES_HOST")
-    POSTGRES_DB = os.getenv("POSTGRES_DB")
-    POSTGRES_PORT = int(os.getenv("POSTGRES_PORT"))
-
-    # Connect to database
-    SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
-
-    # Redis Settings
-    REDIS_HOST = os.getenv("REDIS_HOST")
-    REDIS_PORT = int(os.getenv("REDIS_PORT"))
-    REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
-
-    # Superset Settings
-    SUPERSET_PORT = int(os.getenv("SUPERSET_PORT"))
-    SUPERSET_EXTERNAL_PORT = int(os.getenv("SUPERSET_EXTERNAL_PORT"))
-
-    # Email Settings
-    EMAIL_NOTIFICATIONS = True
-    SMTP_HOST = os.getenv("SMTP_HOST")
-    SMTP_PORT = int(os.getenv("SMTP_PORT"))
-    SMTP_USER = os.getenv("SMTP_USER")
-    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
-    SMTP_MAIL_FROM = os.getenv("SMTP_MAIL_FROM")
-    SMTP_STARTTLS = True
-    SMTP_SSL = False
-
-    # Enable email features
-    ENABLE_EMAIL_REPORTS = True
-    ENABLE_ALERT_EMAIL_REPORTS = True
-    ENABLE_SCHEDULED_EMAIL_REPORTS = True
 
     # App Settings
     APP_NAME = "Superset Analytics"
-    SECRET_KEY = "F4Y58kW6frSGa9DfvzKej/xsdQz5nzdkC8CyqKI0CIXXasV3SuUQnSvJ"
 
     # Enable features
     FEATURE_FLAGS = {
@@ -66,8 +31,8 @@ data:
     }
 
     # Email URL for reports
-    WEBDRIVER_BASEURL = f"http://superset-service:8088"
-    WEBDRIVER_BASEURL_USER_FRIENDLY = f"http://localhost:30080"
+    WEBDRIVER_BASEURL = "https://e57f31424167.ngrok-free.app/"
+    WEBDRIVER_BASEURL_USER_FRIENDLY = "https://e57f31424167.ngrok-free.app/"
 
     # ===========================================
     # WELCOME EMAIL FUNCTIONALITY
@@ -519,6 +484,8 @@ spec:
           value: "8088"
         - name: SUPERSET_EXTERNAL_PORT
           value: "30080"
+        - name: SUPERSET_CONTAINER_NAME
+          value: "superset_web"
         - name: SUPERSET_SECRET_KEY
           valueFrom:
             secretKeyRef:
