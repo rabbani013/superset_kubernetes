@@ -5,7 +5,8 @@ echo "⏰ Starting Celery beat scheduler..."
 
 # Wait for database and redis
 echo "⏳ Waiting for database and redis..."
-sleep ${DATABASE_WAIT_TIME}
+DATABASE_WAIT_TIME=${DATABASE_WAIT_TIME:-20}
+sleep $DATABASE_WAIT_TIME
 
 # Create beat schedule directory and set permissions
 echo "🔧 Setting up beat schedule directory..."
@@ -15,4 +16,4 @@ chmod 777 "$BEAT_SCHEDULE_DIR"
 
 # Start Celery beat with custom schedule path
 echo "📅 Starting task scheduler..."
-celery --app=superset.tasks.celery_app:app beat --schedule="$BEAT_SCHEDULE_DIR/celerybeat-schedule"
+exec celery --app=superset.tasks.celery_app:app beat --schedule="$BEAT_SCHEDULE_DIR/celerybeat-schedule"

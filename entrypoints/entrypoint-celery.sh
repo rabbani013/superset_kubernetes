@@ -5,8 +5,9 @@ echo "👷 Starting Celery worker..."
 
 # Wait for database and redis
 echo "⏳ Waiting for database and redis..."
-sleep 20
+DATABASE_WAIT_TIME=${DATABASE_WAIT_TIME:-20}
+sleep $DATABASE_WAIT_TIME
 
 # Start Celery worker
 echo "🔄 Starting background worker..."
-celery --app=superset.tasks.celery_app:app worker --pool=${WORKER_POOL:-solo} -O${WORKER_OPTIMIZATION:-fair}
+exec celery --app=superset.tasks.celery_app:app worker --pool=${WORKER_POOL:-solo} -O${WORKER_OPTIMIZATION:-fair}

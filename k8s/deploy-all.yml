@@ -610,6 +610,224 @@ spec:
   type: NodePort
 
 ---
+# Superset Beat Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: superset-beat
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: superset-beat
+  template:
+    metadata:
+      labels:
+        app: superset-beat
+    spec:
+      containers:
+      - name: superset-beat
+        image: superset-k8s:latest
+        imagePullPolicy: Never
+        env:
+        - name: DATABASE_WAIT_TIME
+          value: "20"
+        - name: BEAT_SCHEDULE_DIR
+          value: "/tmp/celery_beat_data"
+        - name: WORKER_POOL
+          value: "solo"
+        - name: WORKER_OPTIMIZATION
+          value: "fair"
+        - name: SUPERSET_CONFIG_PATH
+          value: "/app/pythonpath/superset_config.py"
+        - name: PYTHONPATH
+          value: "/app/pythonpath"
+        - name: SUPERSET_HOME
+          value: "/app/superset_home"
+        - name: SUPERSET_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: superset-secret-key
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: postgres-password
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: postgres-db
+        - name: POSTGRES_HOST
+          value: "postgres-service"
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: redis-password
+        - name: SUPERSET_PORT
+          value: "8088"
+        - name: SUPERSET_EXTERNAL_PORT
+          value: "30080"
+        - name: DATABASE_URL
+          value: "postgresql://superset:superset@postgres-service:5432/superset"
+        - name: REDIS_URL
+          value: "redis://:superset@redis-service:6379/0"
+        - name: SMTP_HOST
+          value: "smtp.gmail.com"
+        - name: SMTP_PORT
+          value: "587"
+        - name: SMTP_USER
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: smtp-user
+        - name: SMTP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: smtp-password
+        - name: SMTP_MAIL_FROM
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: smtp-mail-from
+        command: ["/app/entrypoint-beat.sh"]
+        volumeMounts:
+        - name: superset-config
+          mountPath: /app/pythonpath
+        - name: superset-exports
+          mountPath: /app/superset-repo
+      volumes:
+      - name: superset-config
+        configMap:
+          name: superset-config
+      - name: superset-exports
+        emptyDir: {}
+
+---
+# Superset Worker Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: superset-worker
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: superset-worker
+  template:
+    metadata:
+      labels:
+        app: superset-worker
+    spec:
+      containers:
+      - name: superset-worker
+        image: superset-k8s:latest
+        imagePullPolicy: Never
+        env:
+        - name: DATABASE_WAIT_TIME
+          value: "20"
+        - name: BEAT_SCHEDULE_DIR
+          value: "/tmp/celery_beat_data"
+        - name: WORKER_POOL
+          value: "solo"
+        - name: WORKER_OPTIMIZATION
+          value: "fair"
+        - name: SUPERSET_CONFIG_PATH
+          value: "/app/pythonpath/superset_config.py"
+        - name: PYTHONPATH
+          value: "/app/pythonpath"
+        - name: SUPERSET_HOME
+          value: "/app/superset_home"
+        - name: SUPERSET_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: superset-secret-key
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: postgres-password
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: postgres-db
+        - name: POSTGRES_HOST
+          value: "postgres-service"
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: redis-password
+        - name: SUPERSET_PORT
+          value: "8088"
+        - name: SUPERSET_EXTERNAL_PORT
+          value: "30080"
+        - name: DATABASE_URL
+          value: "postgresql://superset:superset@postgres-service:5432/superset"
+        - name: REDIS_URL
+          value: "redis://:superset@redis-service:6379/0"
+        - name: SMTP_HOST
+          value: "smtp.gmail.com"
+        - name: SMTP_PORT
+          value: "587"
+        - name: SMTP_USER
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: smtp-user
+        - name: SMTP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: smtp-password
+        - name: SMTP_MAIL_FROM
+          valueFrom:
+            secretKeyRef:
+              name: superset-secrets
+              key: smtp-mail-from
+        command: ["/app/entrypoint-celery.sh"]
+        volumeMounts:
+        - name: superset-config
+          mountPath: /app/pythonpath
+        - name: superset-exports
+          mountPath: /app/superset-repo
+      volumes:
+      - name: superset-config
+        configMap:
+          name: superset-config
+      - name: superset-exports
+        emptyDir: {}
+
+---
 # Superset Service (ClusterIP for internal access)
 apiVersion: v1
 kind: Service
