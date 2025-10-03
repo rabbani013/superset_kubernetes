@@ -37,7 +37,7 @@ services:
       SUPERSET_EXTERNAL_PORT: 8088
       SUPERSET_CONTAINER_NAME: superset_web
       SUPERSET_SECRET_KEY: F4Y58kW6frSGa9DfvzKej/xsdQz5nzdkC8CyqKI0CIXXasV3SuUQnSvJ
-      SUPERSET_CONFIG_PATH: /app/superset_config_local.py
+      SUPERSET_CONFIG_PATH: /app/superset-config-local.py
       ADMIN_USERNAME: admin
       ADMIN_FIRSTNAME: Admin
       ADMIN_LASTNAME: User
@@ -45,7 +45,7 @@ services:
       ADMIN_PASSWORD: admin
       INIT_MODE: fresh
     volumes:
-      - ./config/superset_config_local.py:/app/superset_config_local.py
+      - ./config/superset-config-local.py:/app/superset-config-local.py
     depends_on:
       - superset-postgres
       - superset-redis
