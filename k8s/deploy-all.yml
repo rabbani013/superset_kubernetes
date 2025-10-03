@@ -551,7 +551,7 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 10
         
-        command: ["/app/entrypoint-superset-final-working.sh"]
+        command: ["/app/entrypoint-superset.sh"]
         
       volumes:
       - name: superset-config

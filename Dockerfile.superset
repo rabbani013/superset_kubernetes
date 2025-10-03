@@ -18,8 +18,8 @@ RUN pip install --no-cache-dir -r /app/requirements-local.txt
 # Copy Celery entrypoint scripts
 COPY entrypoints/entrypoint-celery.sh /app/entrypoint-celery.sh
 COPY entrypoints/entrypoint-beat.sh /app/entrypoint-beat.sh
-COPY entrypoints/entrypoint-superset-final-working.sh /app/entrypoint-superset-final-working.sh
-RUN chmod +x /app/entrypoint-celery.sh /app/entrypoint-beat.sh /app/entrypoint-superset-final-working.sh
+COPY entrypoints/entrypoint-superset.sh /app/entrypoint-superset.sh
+RUN chmod +x /app/entrypoint-celery.sh /app/entrypoint-beat.sh /app/entrypoint-superset.sh
 
 USER superset
 

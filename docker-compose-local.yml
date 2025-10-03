@@ -1,0 +1,61 @@
+# version: '3.8'
+
+services:
+  superset-postgres:
+    image: postgres:13
+    container_name: superset-postgres
+    environment:
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset
+      POSTGRES_DB: superset
+    volumes:
+      - superset-postgres-data:/var/lib/postgresql/data
+    networks:
+      - superset-local
+
+  superset-redis:
+    image: redis:6
+    container_name: superset-redis
+    networks:
+      - superset-local
+
+  superset-web:
+    image: superset-k8s:latest
+    container_name: superset-web
+    ports:
+      - "8088:8088"
+    environment:
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset
+      POSTGRES_DB: superset
+      POSTGRES_HOST: superset-postgres
+      POSTGRES_PORT: 5432
+      REDIS_HOST: superset-redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ""
+      SUPERSET_PORT: 8088
+      SUPERSET_EXTERNAL_PORT: 8088
+      SUPERSET_CONTAINER_NAME: superset_web
+      SUPERSET_SECRET_KEY: F4Y58kW6frSGa9DfvzKej/xsdQz5nzdkC8CyqKI0CIXXasV3SuUQnSvJ
+      SUPERSET_CONFIG_PATH: /app/superset_config_local.py
+      ADMIN_USERNAME: admin
+      ADMIN_FIRSTNAME: Admin
+      ADMIN_LASTNAME: User
+      ADMIN_EMAIL: admin@example.com
+      ADMIN_PASSWORD: admin
+      INIT_MODE: fresh
+    volumes:
+      - ./config/superset_config_local.py:/app/superset_config_local.py
+    depends_on:
+      - superset-postgres
+      - superset-redis
+    networks:
+      - superset-local
+    command: /app/entrypoint-superset.sh
+
+volumes:
+  superset-postgres-data:
+
+networks:
+  superset-local:
+    name: superset-local
